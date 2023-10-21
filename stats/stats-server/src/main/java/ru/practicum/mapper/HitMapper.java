@@ -1,6 +1,5 @@
 package ru.practicum.mapper;
 
-import org.springframework.stereotype.Service;
 import ru.practicum.statsDto.HitDto;
 import ru.practicum.model.Hit;
 
