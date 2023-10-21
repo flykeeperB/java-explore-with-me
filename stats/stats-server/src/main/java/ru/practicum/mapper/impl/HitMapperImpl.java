@@ -13,6 +13,7 @@ public class HitMapperImpl implements HitMapper {
                 .ip(hitDto.getIp())
                 .app(hitDto.getApp())
                 .uri(hitDto.getUri())
+                .timestamp(hitDto.getTimestamp())
                 .build();
     }
 
@@ -22,6 +23,7 @@ public class HitMapperImpl implements HitMapper {
                 .ip(hit.getIp())
                 .app(hit.getApp())
                 .uri(hit.getUri())
+                .timestamp(hit.getTimestamp())
                 .build();
     }
 }
