@@ -18,7 +18,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class StatsClientImpl implements StatsClient {
     @Value("${stats-server.url}")
-    final private String serverUrl;
+    private final String serverUrl;
 
     private final RestTemplate rest = new RestTemplate();
 
@@ -46,7 +46,7 @@ public class StatsClientImpl implements StatsClient {
         }
 
         HitsStatsDto[] response = rest.getForObject(
-                serverUrl.concat(GET_STATS_ENDPOINT+"?start={start}&end={end}&uris={uris}&unique={unique}"),
+                serverUrl.concat(GET_STATS_ENDPOINT + "?start={start}&end={end}&uris={uris}&unique={unique}"),
                 HitsStatsDto[].class,
                 parameters);
 
