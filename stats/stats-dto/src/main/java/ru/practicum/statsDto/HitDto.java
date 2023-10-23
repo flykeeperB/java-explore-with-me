@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,12 +18,15 @@ import java.time.LocalDateTime;
 public class HitDto {
 
     @NotBlank(message = "Не указано наименование приложения")
+    @Size(max = 255)
     private String app;
 
     @NotBlank(message = "Не указан URI")
+    @Size(max = 512)
     private String uri;
 
     @NotBlank(message = "Не указан IP пользователя")
+    @Size(max = 255)
     private String ip;
 
     @NotNull(message = "Не задано время отправления запроса")
