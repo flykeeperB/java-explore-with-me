@@ -1,5 +1,6 @@
 package ru.practicum.ewm.category.mapper.impl;
 
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.mapper.CategoryMapper;
 import ru.practicum.ewm.category.model.Category;
@@ -7,13 +8,19 @@ import ru.practicum.ewm.category.model.Category;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class CategoryMapperImpl implements CategoryMapper {
     @Override
     public Category mapToCategory(CategoryDto categoryDto) {
-        return Category.builder()
-                .id(categoryDto.getId())
+        Category category = Category.builder()
                 .name(categoryDto.getName())
                 .build();
+
+        if (categoryDto.getId() != null) {
+            category.setId(categoryDto.getId());
+        }
+
+        return category;
     }
 
     @Override

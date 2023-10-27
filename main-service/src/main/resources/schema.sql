@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS events
     state              VARCHAR,
     category_id        BIGINT,
     initiator_id       BIGINT,
-    location_id        BIGINT,
+
 	
     CONSTRAINT pk_events PRIMARY KEY (id),
     CONSTRAINT fk_events_category_id FOREIGN KEY (category_id)

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userRequestDto) {
-        log.info("createUser "+userRequestDto);
+        log.info("createUser " + userRequestDto);
 
         if (userRepository.existsUserByName(userRequestDto.getName())) {
             throw new ConflictException("Username already used.");
