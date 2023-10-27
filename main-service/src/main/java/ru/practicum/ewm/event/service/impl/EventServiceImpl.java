@@ -71,7 +71,7 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден."));
 
-        Category category = getCategory(newEventDto.getCategory()) ;
+        Category category = getCategory(newEventDto.getCategory());
 
         Event event = eventMapper.mapToEvent(newEventDto, category, user);
         event.setConfirmedRequests(0L);
