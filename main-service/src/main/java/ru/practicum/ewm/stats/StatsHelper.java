@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class Stats {
+public class StatsHelper {
     private static final String APP = "main-service";
     private static final int YEARS_OFFSET = 100;
     private final StatsClient statsClient;
@@ -35,7 +35,28 @@ public class Stats {
         return event;
     }
 
-    public List<EventShortDto> setViewsNumber(List<EventShortDto> events) {
+    public List<EventDto> setViewsNumber(List<EventDto> events) {
+        List<String> uris = new ArrayList<>();
+        for (EventDto eventDto : events) {
+            uris.add("/events/" + eventDto.getId());
+        }
+
+        List<HitsStatsDto> hits = statsClient.getStats(LocalDateTime.now().minusYears(YEARS_OFFSET),
+                LocalDateTime.now(), uris, true);
+        if (!hits.isEmpty()) {
+            Map<Long, Long> hitMap = mapHits(hits);
+            for (EventDto event : events) {
+                event.setViews(hitMap.getOrDefault(event.getId(), 0L));
+            }
+        } else {
+            for (EventDto event : events) {
+                event.setViews(0L);
+            }
+        }
+        return events;
+    }
+
+    public List<EventShortDto> setViewsNumberForShortDto(List<EventShortDto> events) {
         List<String> uris = new ArrayList<>();
         for (EventShortDto eventShortDto : events) {
             uris.add("/events/" + eventShortDto.getId());
@@ -44,24 +65,24 @@ public class Stats {
         List<HitsStatsDto> hits = statsClient.getStats(LocalDateTime.now().minusYears(YEARS_OFFSET),
                 LocalDateTime.now(), uris, true);
         if (!hits.isEmpty()) {
-            Map<Long, Integer> hitMap = mapHits(hits);
+            Map<Long, Long> hitMap = mapHits(hits);
             for (EventShortDto event : events) {
-                event.setViews(hitMap.getOrDefault(event.getId(), 0));
+                event.setViews(hitMap.getOrDefault(event.getId(), 0L));
             }
         } else {
             for (EventShortDto event : events) {
-                event.setViews(0);
+                event.setViews(0L);
             }
         }
         return events;
     }
 
-    private Map<Long, Integer> mapHits(List<HitsStatsDto> hits) {
-        Map<Long, Integer> hitMap = new HashMap<>();
+    private Map<Long, Long> mapHits(List<HitsStatsDto> hits) {
+        Map<Long, Long> hitMap = new HashMap<>();
         for (var hit : hits) {
             String hitUri = hit.getUri();
             Long id = Long.valueOf(hitUri.substring(8));
-            hitMap.put(id, (int) hit.getHits());
+            hitMap.put(id, (Long) hit.getHits());
         }
         return hitMap;
     }

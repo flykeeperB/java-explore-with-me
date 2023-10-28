@@ -5,7 +5,6 @@ import ru.practicum.ewm.event.model.SortEvents;
 import ru.practicum.ewm.event.model.State;
 import ru.practicum.ewm.request.dto.RequestDto;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,9 +21,10 @@ public interface EventService {
                                   SortEvents sort,
                                   Integer from,
                                   Integer size,
-                                  HttpServletRequest request);
+                                  String ip,
+                                  String uri);
 
-    EventDto getEventById(Long eventId, HttpServletRequest request);
+    EventDto getEventById(Long eventId, String ip);
 
     List<EventDto> getAllEventsByUserId(Long userId, Integer from, Integer size);
 

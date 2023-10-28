@@ -83,7 +83,7 @@ public class CategoryServiceImpl implements CategoryService {
                 () -> new NotFoundException("Не найдена выбранная категория"));
 
         if (eventRepository.existsEventsByCategory_Id(categoryId)) {
-            throw new ConflictException("Такой пользователь уже есть");
+            throw new ConflictException("Имеются события, отнесенные к удаляемой категории.");
         }
 
         categoryRepository.deleteById(categoryId);

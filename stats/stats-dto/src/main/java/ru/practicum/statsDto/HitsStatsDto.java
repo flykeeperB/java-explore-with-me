@@ -12,5 +12,5 @@ import lombok.AllArgsConstructor;
 public class HitsStatsDto {
     private String app;
     private String uri;
-    private long hits;
+    private Long hits;
 }

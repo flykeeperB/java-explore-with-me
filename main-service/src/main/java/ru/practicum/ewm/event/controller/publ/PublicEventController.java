@@ -32,7 +32,8 @@ public class PublicEventController {
                                          @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
                                          @RequestParam(required = false, defaultValue = "EVENT_DATE") SortEvents sort,
                                          @RequestParam(required = false, defaultValue = "0") Integer from,
-                                         @RequestParam(required = false, defaultValue = "10") Integer size, HttpServletRequest request) {
+                                         @RequestParam(required = false, defaultValue = "10") Integer size,
+                                         HttpServletRequest request) {
 
         LocalDateTime start = null;
         LocalDateTime end = null;
@@ -50,13 +51,25 @@ public class PublicEventController {
             }
         }
 
-        return eventService.getEvents(text, categories, paid, start, end, onlyAvailable, sort, from, size, request);
+        return eventService.getEvents(
+                text,
+                categories,
+                paid,
+                start,
+                end,
+                onlyAvailable,
+                sort,
+                from,
+                size,
+                request.getRemoteAddr(),
+                request.getRequestURI()
+        );
     }
 
     @GetMapping("/{id}")
     public EventDto getEventById(@PathVariable Long id, HttpServletRequest request) {
 
-        return eventService.getEventById(id, request);
+        return eventService.getEventById(id, request.getRemoteAddr());
     }
 
 
