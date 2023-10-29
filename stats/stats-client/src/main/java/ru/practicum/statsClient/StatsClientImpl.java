@@ -1,6 +1,5 @@
 package ru.practicum.statsClient;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,9 +14,8 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
 public class StatsClientImpl implements StatsClient {
-    @Value("${stats-server.url}")
+
     private final String serverUrl;
 
     private final RestTemplate rest = new RestTemplate();
@@ -25,6 +23,10 @@ public class StatsClientImpl implements StatsClient {
     private static final String HIT_ENDPOINT = "/hit";
     private static final String GET_STATS_ENDPOINT = "/stats";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public StatsClientImpl(@Value("${stats-server.url}") String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
 
 
     @Override
