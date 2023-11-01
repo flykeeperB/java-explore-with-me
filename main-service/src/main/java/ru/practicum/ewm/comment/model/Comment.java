@@ -46,4 +46,14 @@ public class Comment {
     @Column(nullable = false)
     private Boolean deleted = false;
 
+    @PrePersist
+    protected void onCreate() {
+        created = LocalDateTime.now();
+        lastChanged = created;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastChanged = LocalDateTime.now();
+    }
 }

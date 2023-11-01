@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.comment.dto.CommentDto;
 import ru.practicum.ewm.comment.dto.CommentVersionDto;
@@ -23,7 +22,6 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public CommentDto createCommentByUser(Long userId, NewCommentDto newCommentDto) {
         log.info(String.format("createCommentByUser userId-%d newCommentDto-%s", userId, newCommentDto));
 
@@ -60,8 +58,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment comment = commentMapper.mapToComment(newCommentDto, user, event, replyToComment);
-        comment.setCreated(LocalDateTime.now());
-        comment.setLastChanged(comment.getCreated());
+
         comment.setDeleted(false);
 
         Comment createdComment = saveComment(comment);
@@ -69,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public CommentDto updateCommentByUser(Long userId, UpdateCommentDto updateCommentDto) {
         log.info(String.format("updateCommentByUser userId-%d newCommentDto-%s", userId, updateCommentDto));
 
@@ -93,8 +90,6 @@ public class CommentServiceImpl implements CommentService {
             replyComment.ifPresent(comment::setReplyToComment);
         }
 
-        comment.setLastChanged(LocalDateTime.now());
-
         Comment updatedComment = commentRepository.save(comment);
 
         CommentVersion commentVersion = commentMapper.mapToCommentVersion(updatedComment);
@@ -104,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public void deleteCommentByUser(Long userId, Long commentId) {
         log.info(String.format("deleteCommentByUser userId-%d commentId-%d", userId, commentId));
 
@@ -122,6 +117,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CommentDto getCommentById(Long commentId) {
         log.info(String.format("getCommentById commentId-%d", commentId));
 
@@ -132,6 +128,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentVersionDto> getCommentsHistory(Long userId, Long commentId, int size, int from) {
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);
@@ -153,6 +150,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentVersionDto> getCommentsHistoryForAdmin(Long commentId, int size, int from) {
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);
@@ -164,7 +162,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    @Transactional
     public List<CommentDto> getCommentsByUserId(Long userId, int size, int from) {
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);
@@ -179,6 +177,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteCommentByAdmin(Long commentId) {
         log.info(String.format("deleteCommentByAdmin commentId-%d", commentId));
 
@@ -187,6 +186,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> getCommentsByEventId(Long eventId, int size, int from) {
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);
@@ -196,12 +196,9 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.mapToCommentDto(comments);
     }
 
-    @Transactional
     private void deleteComment(Comment deleteComment) {
 
-        deleteComment.setCreated(LocalDateTime.now());
         deleteComment.setActualText(DELETE_MARK);
-        deleteComment.setLastChanged(LocalDateTime.now());
         deleteComment.setDeleted(true);
 
         Comment deletedComment = commentRepository.save(deleteComment);
@@ -210,10 +207,10 @@ public class CommentServiceImpl implements CommentService {
         commentHistoryRepository.save(commentVersion);
     }
 
-    @Transactional
     private Comment saveComment(Comment comment) {
         Comment result = commentRepository.save(comment);
         CommentVersion commentVersion = commentMapper.mapToCommentVersion(result);
+
         commentHistoryRepository.save(commentVersion);
         return result;
     }
